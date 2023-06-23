@@ -1,4 +1,5 @@
 const express = require("express");
+const jwt = require("jsonwebtoken");
 const { Users } = require("../models");
 const router = express.Router();
 
@@ -34,6 +35,31 @@ router.post("/signup", async (req, res) => {
 
     } catch (err) {
         return res.status(400).json({ errorMessage: "요청한 데이터 형식이 올바르지 않습니다." });
+    }
+});
+
+// 로그인 API
+router.post("/login", async (req, res) => {
+    const { nickname, password } = req.body;
+    try {
+        const user = await Users.findOne({ where: { nickname } });
+
+        if (!user || password !== user.password) {
+            res.status(412).json({
+                errorMessage: "닉네임 또는 패스워드를 확인해주세요.",
+            });
+            return;
+        }
+
+        const token = jwt.sign(
+            { userId: user.userId },
+            "custom-secret-key",
+        );
+        res.cookie("Authorization", `Bearer ${token}`);
+        res.status(200).json({ token });
+
+    } catch (err) {
+        return res.status(400).json({ errorMessage: "로그인에 실패하였습니다." });
     }
 });
 
