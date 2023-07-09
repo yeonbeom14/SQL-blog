@@ -12,24 +12,16 @@ router.post('/signup', async (req, res) => {
 
   try {
     if (!nicknameReg.test(nickname)) {
-      return res
-        .status(412)
-        .json({ errorMessage: '닉네임의 형식이 일치하지 않습니다.' });
+      return res.status(412).json({ errorMessage: '닉네임의 형식이 일치하지 않습니다.' });
     }
     if (password !== confirm) {
-      return res
-        .status(412)
-        .json({ errorMessage: '패스워드가 일치하지 않습니다.' });
+      return res.status(412).json({ errorMessage: '패스워드가 일치하지 않습니다.' });
     }
     if (!passwordReg.test(password)) {
-      return res
-        .status(412)
-        .json({ errorMessage: '패스워드 형식이 일치하지 않습니다.' });
+      return res.status(412).json({ errorMessage: '패스워드 형식이 일치하지 않습니다.' });
     }
     if (password.includes(nickname)) {
-      return res
-        .status(412)
-        .json({ errorMessage: '패스워드에 닉네임이 포함되어 있습니다.' });
+      return res.status(412).json({ errorMessage: '패스워드에 닉네임이 포함되어 있습니다.' });
     }
 
     const isExistUser = await Users.findOne({ where: { nickname } });
@@ -41,9 +33,7 @@ router.post('/signup', async (req, res) => {
 
     return res.status(201).json({ message: '회원 가입에 성공하였습니다.' });
   } catch (err) {
-    return res
-      .status(400)
-      .json({ errorMessage: '요청한 데이터 형식이 올바르지 않습니다.' });
+    return res.status(400).json({ errorMessage: '요청한 데이터 형식이 올바르지 않습니다.' });
   }
 });
 
@@ -61,7 +51,7 @@ router.post('/login', async (req, res) => {
     }
 
     const token = jwt.sign({ userId: user.userId }, process.env.secretKey, {
-      expiresIn: '1m',
+      expiresIn: '60m',
     });
     res.cookie('Authorization', `Bearer ${token}`);
     res.status(200).json({ token });
