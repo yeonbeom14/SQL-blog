@@ -29,7 +29,7 @@ router.post('/signup', async (req, res) => {
       return res.status(412).json({ errorMessage: '중복된 닉네임입니다.' });
     }
 
-    const user = await Users.create({ nickname, password });
+    await Users.create({ nickname, password });
 
     return res.status(201).json({ message: '회원 가입에 성공하였습니다.' });
   } catch (err) {
@@ -54,7 +54,7 @@ router.post('/login', async (req, res) => {
       expiresIn: '60m',
     });
     res.cookie('Authorization', `Bearer ${token}`);
-    res.status(200).json({ token });
+    return res.status(200).json({ token });
   } catch (err) {
     return res.status(400).json({ errorMessage: '로그인에 실패하였습니다.' });
   }

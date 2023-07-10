@@ -18,7 +18,7 @@ module.exports = async (req, res, next) => {
     const user = await Users.findOne({ where: { userId } });
     if (!user) {
       res.clearCookie('Authorization');
-      return res.status(401).json({ message: '토큰 사용자가 존재하지 않습니다.' });
+      return res.status(401).json({ errorMessage: '토큰 사용자가 존재하지 않습니다.' });
     }
     res.locals.user = user;
     next();

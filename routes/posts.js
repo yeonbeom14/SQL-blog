@@ -17,7 +17,7 @@ router.post('/posts', authMiddleware, async (req, res) => {
       title,
       content,
     });
-    res.status(201).json({ post: createdPost, message: '게시글 작성에 성공하였습니다.' });
+    return res.status(201).json({ post: createdPost, message: '게시글 작성에 성공하였습니다.' });
   } catch (err) {
     return res.status(400).json({ errorMessage: '게시글 작성에 실패하였습니다.' });
   }
@@ -27,6 +27,7 @@ router.post('/posts', authMiddleware, async (req, res) => {
 router.get('/posts', async (req, res) => {
   try {
     const posts = await Posts.findAll({
+      raw: true,
       include: [
         {
           model: Users,
@@ -48,6 +49,7 @@ router.get('/posts/:postId', async (req, res) => {
   const { postId } = req.params;
   try {
     const post = await Posts.findOne({
+      raw: true,
       include: [
         {
           model: Users,

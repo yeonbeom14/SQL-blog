@@ -26,7 +26,7 @@ router.post('/posts/:postId/comments', authMiddleware, async (req, res) => {
       comment,
     });
 
-    res.status(201).json({ comment: createdComment, message: '댓글을 작성하였습니다.' });
+    return res.status(201).json({ comment: createdComment, message: '댓글을 작성하였습니다.' });
   } catch (err) {
     return res.status(400).json({ errorMessage: '댓글 작성에 실패하였습니다.' });
   }
@@ -43,6 +43,7 @@ router.get('/posts/:postId/comments', async (req, res) => {
     }
 
     const commentList = await Comments.findAll({
+      raw: true,
       include: [
         {
           model: Users,
@@ -54,7 +55,7 @@ router.get('/posts/:postId/comments', async (req, res) => {
       order: [['createdAt', 'DESC']],
     });
 
-    res.json({ comments: commentList });
+    return res.json({ comments: commentList });
   } catch (err) {
     return res.status(400).json({ errorMessage: '댓글 조회에 실패하였습니다.' });
   }
@@ -89,8 +90,8 @@ router.put('/posts/:postId/comments/:commentId', authMiddleware, async (req, res
     await Comments.update({ comment }, { where: { commentId } });
 
     return res.status(200).json({ message: '댓글을 수정하였습니다.' });
-  } catch (error) {
-    return res.status(500).json({ error, errorMessage: '댓글을 수정에 실패하였습니다.' });
+  } catch (err) {
+    return res.status(400).json({ errorMessage: '댓글을 수정에 실패하였습니다.' });
   }
 });
 
@@ -117,8 +118,8 @@ router.delete('/posts/:postId/comments/:commentId', authMiddleware, async (req, 
     await Comments.destroy({ where: { commentId } });
 
     return res.status(200).json({ message: '댓글을 삭제하였습니다.' });
-  } catch (error) {
-    return res.status(500).json({ error, errorMessage: '댓글 삭제에 실패하였습니다.' });
+  } catch (err) {
+    return res.status(400).json({ errorMessage: '댓글 삭제에 실패하였습니다.' });
   }
 });
 
